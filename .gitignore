@@ -175,3 +175,6 @@ data/
 
 # Ignore models
 task1/model
+
+# Ignore compiled code
+task2/game_tree
