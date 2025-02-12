@@ -10,7 +10,7 @@ It will fail in the following case and return an incorrect play time:
 2. An entry is added with play time B
 3. A (duplicate) entry with play time A or B is added
 
-This could easily be fixed by just storing all the data in an initial pass, and then optionally adding play times in a second pass.
+This could easily be fixed by just storing all the unique play times in an array instead of adding them.
 
 ## Compile
 ```

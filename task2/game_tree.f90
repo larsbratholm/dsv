@@ -7,8 +7,6 @@ program game_tree
     type :: TreeNode
         character(len=max_length) :: user_id
         character(len=max_length) :: game_name
-        ! NOTE: just store time_played as string since we don't need to do
-        !       any operations on it.
         real :: time_played
         type(TreeNode), pointer :: left => null()
         type(TreeNode), pointer :: right => null()
@@ -23,6 +21,7 @@ program game_tree
         stop
     end if
     call load_csv(filename, root)
+    call print_tree(root)
 
 contains
 
@@ -54,7 +53,11 @@ contains
                 if (time_played <= 1.0e-6) then
                     print *, "Ignoring duplicate of user_id: ", trim(user_id), " game: ", trim(game_name)
                 else
-                    root%time_played = root%time_played + time_played
+                    if ((time_played - root%time_played) < 1.0e-6) then
+                        print *, "Ignoring duplicate of user_id: ", trim(user_id), " game: ", trim(game_name)
+                    else
+                        root%time_played = root%time_played + time_played
+                    endif
                 endif
             endif
         else if (user_id < root%user_id) then
