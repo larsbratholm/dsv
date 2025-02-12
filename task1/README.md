@@ -10,7 +10,7 @@ Evaluation:
 python -m task1.evaluate data/ task1/model
 ```
 ## Model description
-I fine-tuned a linear classification layer of a LayoutLMv3 model for token classification.
+I fine-tuned a LayoutLMv3 model for token classification.
 Since the given dataset is used in the LayoutLMv3ForTokenClassification notebook,
 I used some of the same data transformation strategies.
 The block-level (per-id) labels were converted into word-level labels,
@@ -22,7 +22,9 @@ The default usage is that the bounding box accompanying a word is the bounding b
 word appears in.
 I tested a word-level bounding box approach as well as using bounding boxes that encompasses the
 bounding boxes of all the linked blocks.
-The latter was an attempt at incorporating the linkage from the OCR.
+The latter was an attempt at incorporating the linkage from the OCR, but the block-level approach
+worked the best since the model was pre-trained this way
+(might change if fine-tuning the pre-trained model).
 
 Since the model provides word-level predictions, I added a post-processing step that
 gathers the predictions to block-level (per-id).
@@ -38,11 +40,18 @@ A better approach would be to create several sliding windows, but I just made tw
 when needed.
 
 ## Reults
-The fitted model gives and accuracy around 83%
+The fitted model gives an accuracy around 83%.
+Training only the linear classification layer gave an accuracy of around 82%.
+Note that I cheated a bit by being lazy and using the test set for early stopping,
+but I don't think it changes much.
 
 ## Improvements
-Other than the previously mentioned issues, the classifier can likely be improved by
+Other than the previously mentioned issues, the classifier can possibly be improved by
 adding a non-linearity (hidden layer).
-Since I only fine-tune the linear classification layer on top of the untouched pre-trained model,
-the model might be a bit too constrained, and it would be rather easy to change this.
-Alternatively a second fine-tuning step could be added with low-rank adaptors of the entire model.
+A better training strategy would also be to train only the linear classifier layer, followed by
+training low-rank adaptors to the main body of the model, as the dataset is not huge.
+
+Since there is some pattern in the linking, e.g. label can't be 'answer' if there's no linking,
+answers are preceeded by questions etc., I was thinking that a simple post-prediction filter could
+be added, but didn't have the time to test it out, and it's likely that the model captures it on it's
+own.

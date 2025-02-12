@@ -199,7 +199,7 @@ def prepare_data(data: list[Datum], processor: AutoProcessor) -> datasets.Datase
 
 
 def parse_data(
-    dataset_location: str, bounding_box_mode: str = "word", normalize: bool = True
+    dataset_location: str, bounding_box_mode: str = "block", normalize: bool = True
 ) -> Dataset:
     """
     Parse the data files.

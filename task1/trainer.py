@@ -69,19 +69,19 @@ def parse_args() -> Arguments:
     parser.add_argument(
         "--early_stopping_patience",
         type=int,
-        default=10,
+        default=5,
         help="The early stopping patience.",
     )
     parser.add_argument(
         "--learning_rate",
         type=float,
-        default=0.003,
+        default=1e-5,
         help="The learning rate.",
     )
     parser.add_argument(
         "--max_steps",
         type=int,
-        default=4000,
+        default=1000,
         help="The maximum number of training steps.",
     )
     parser.add_argument(
@@ -93,7 +93,7 @@ def parse_args() -> Arguments:
     parser.add_argument(
         "--logging_steps",
         type=int,
-        default=200,
+        default=100,
         help="The number of steps between evaluation and checkpointing.",
     )
 
@@ -104,19 +104,15 @@ def parse_args() -> Arguments:
 
 def prepare_model(model: PreTrainedModel) -> None:
     """
-    Only train classifier weights.
+    Train all parameters.
 
     Args:
         model: the model
     """
     for param in model.parameters():
-        param.requires_grad_(False)
-    model.classifier.weight.requires_grad_(True)
-
-
-# TODO lower learning rate
-# TODO no normalization
-# TODO different boxes
+        param.requires_grad_(True)
+    # model.classifier.weight.requires_grad_(True)
+    # model.classifier.bias.requires_grad_(True)
 
 
 def fit_model(
